@@ -31,14 +31,14 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
     var currentConfig = config[opts.style];
 
     if (opts.separators) {
-        for (var separator in opts.separators) {
-            if (!opts.separators.hasOwnProperty(separator)) continue;
+        for (var customSeparator in opts.separators) {
+            if (!opts.separators.hasOwnProperty(customSeparator)) continue;
 
-            var separatorValue = opts.separators[separator];
+            var separatorValue = opts.separators[customSeparator];
             if (typeof separatorValue === 'string') {
-                currentConfig.separators[separator] = separatorValue;
+                currentConfig.separators[customSeparator] = separatorValue;
             } else {
-                throw new Error('postcss-bem: opts.separators.' + separator + ' must be a string');
+                throw new Error('postcss-bem: opts.separators.' + customSeparator + ' must be a string');
             }
         }
     }
