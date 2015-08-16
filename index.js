@@ -30,6 +30,19 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
 
     var currentConfig = config[opts.style];
 
+    if (opts.separators) {
+        for (var separator in opts.separators) {
+            if (!opts.separators.hasOwnProperty(separator)) continue;
+
+            var separatorValue = opts.separators[separator];
+            if (typeof separatorValue === 'string') {
+                currentConfig.separators[separator] = separatorValue;
+            } else {
+                throw new Error('postcss-bem: opts.separators.' + separator + ' must be a string');
+            }
+        }
+    }
+
     function processComponent (component, namespace) {
         var name = component.params;
 
