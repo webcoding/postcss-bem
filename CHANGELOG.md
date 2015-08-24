@@ -1,3 +1,6 @@
+0.3.1 (2015-08-24)
+  - Allow overriding separators (#3)
+
 0.3.0 (2015-06-11)
   - Rename `@namespace` to `@component-namespace` (#2)
   - Add BEM support (#2)
