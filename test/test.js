@@ -42,6 +42,14 @@ function testErrors (input, reason, opts, done) {
     });
 }
 
+function testSeparatorOverride (input, output, separatorName, separatorValue, done) {
+    var separators = {};
+    separators[separatorName] = separatorValue;
+    test(input, output, {
+        separators: separators
+    }, done);
+}
+
 describe('postcss-bem', function () {
     describe('suit', function () {
         describe('@utility', function() {
@@ -118,6 +126,10 @@ describe('postcss-bem', function () {
                     defaultNamespace: 'nmmmmsp'
                 }, done);
             });
+
+            it('allows namespace separator overrides', function (done) {
+                testSeparatorOverride('@component-namespace nmsp {@component ComponentName {color: red; text-align: right;}}', '.nmsp_ComponentName {\n    color: red;\n    text-align: right\n}', 'namespace', '_', done);
+            });
         });
 
         describe('@modifier', function() {
@@ -128,6 +140,10 @@ describe('postcss-bem', function () {
             it('works with properties', function (done) {
                 test('@component ComponentName {color: red; text-align: right; @modifier modifierName {color: blue; text-align: left;}}', '.ComponentName {\n    color: red;\n    text-align: right\n}\n.ComponentName--modifierName {\n    color: blue;\n    text-align: left\n}', {}, done);
             });
+
+            it('allows modifier separator overrides', function (done) {
+                testSeparatorOverride('@component ComponentName {@modifier modifierName {}}', '.ComponentName {}\n.ComponentName__modifierName {}', 'modifier', '__', done);
+            });
         });
 
         describe('@descendent', function() {
@@ -137,6 +153,10 @@ describe('postcss-bem', function () {
 
             it('works with properties', function (done) {
                 test('@component ComponentName {color: red; text-align: right; @descendent descendentName {color: blue; text-align: left;}}', '.ComponentName {\n    color: red;\n    text-align: right\n}\n.ComponentName-descendentName {\n    color: blue;\n    text-align: left\n}', {}, done);
+            });
+
+            it('allows descendent separator overrides', function (done) {
+                testSeparatorOverride('@component ComponentName {@descendent descendentName {}}', '.ComponentName {}\n.ComponentName___descendentName {}', 'descendent', '___', done);
             });
         });
 
@@ -155,6 +175,10 @@ describe('postcss-bem', function () {
 
             it('can not be used in root', function (done) {
                 testErrors('@when stateName {color: blue; text-align: left;}', '@when can only be used in rules which are not the root node', {}, done);
+            });
+
+            it('allows state separator overrides', function (done) {
+                testSeparatorOverride('@component ComponentName {@when stateName {}}', '.ComponentName {}\n.ComponentName____stateName {}', 'state', '____', done);
             });
         });
     });
@@ -206,6 +230,10 @@ describe('postcss-bem', function () {
                     style: 'bem'
                 }, done);
             });
+
+            it('allows namespace separator overrides', function (done) {
+                testSeparatorOverride('@component-namespace nmsp {@component component-name {color: red; text-align: right;}}', '.nmsp_component-name {\n    color: red;\n    text-align: right\n}', 'namespace', '_', done);
+            });
         });
 
         describe('@modifier', function() {
@@ -216,6 +244,10 @@ describe('postcss-bem', function () {
             it('works with properties', function (done) {
                 test('@component component-name {color: red; text-align: right; @modifier modifier-name {color: blue; text-align: left;}}', '.component-name {\n    color: red;\n    text-align: right\n}\n.component-name_modifier-name {\n    color: blue;\n    text-align: left\n}', useBem, done);
             });
+
+            it('allows modifier separator overrides', function (done) {
+                testSeparatorOverride('@component component-name {@modifier modifier-name {}}', '.component-name {}\n.component-name__modifier-name {}', 'modifier', '__', done);
+            });
         });
 
         describe('@descendent', function() {
@@ -225,6 +257,10 @@ describe('postcss-bem', function () {
 
             it('works with properties', function (done) {
                 test('@component component-name {color: red; text-align: right; @descendent descendent-name {color: blue; text-align: left;}}', '.component-name {\n    color: red;\n    text-align: right\n}\n.component-name__descendent-name {\n    color: blue;\n    text-align: left\n}', useBem, done);
+            });
+
+            it('allows descendent separator overrides', function (done) {
+                testSeparatorOverride('@component component-name {@descendent descendent-name {}}', '.component-name {}\n.component-name___descendent-name {}', 'descendent', '___', done);
             });
         });
 
