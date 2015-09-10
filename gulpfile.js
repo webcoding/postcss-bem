@@ -21,7 +21,7 @@ gulp.task('test', function () {
 
 gulp.task('watch', function () {
     watchMode = true;
-    return gulp.watch(['index.js', 'test/*.js'], ['lint', 'test']);
+    return gulp.watch(['index.js', 'test/*.js', 'test/fixtures/*.*'], ['lint', 'test']);
 });
 
 gulp.task('default', ['lint', 'test']);
