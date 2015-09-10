@@ -68,6 +68,28 @@
 }
 ```
 
+**With shortcuts**
+```css
+@b nav { /* b is for block */
+    @e item { /* e is for element */
+        display: inline-block;
+    }
+    @m placement_header {
+        background-color: red;
+    }
+}
+```
+
+```css
+.nav {}
+.nav__item {
+    display: inline-block
+}
+.nav_placement_header {
+    background-color: red
+}
+```
+
 ## Usage
 
 ```js
@@ -76,6 +98,9 @@ postcss([ require('postcss-bem')({
     style: 'suit', // suit or bem, suit by default,
     separators: {
         descendent: '__' // overwrite any default separator for chosen style
+    },
+    shortcuts: {
+        utility: 'util' //override at-rule name
     }
 }) ])
 ```
