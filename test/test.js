@@ -17,6 +17,24 @@ function test (input, output, opts, done) {
     });
 }
 
+function testSame(input1, input2, opts, done) {
+    var asyncResults  = [
+        process(input1, opts),
+        process(input2, opts)
+    ];
+    Promise
+        .all(asyncResults)
+        .then(function (results) {
+            expect(results[0].css).to.eql(results[1].css);
+            expect(results[0].warnings()).to.be.empty;
+            expect(results[1].warnings()).to.be.empty;
+            done();
+        })
+        .catch(function (error) {
+            done(error);
+        });
+}
+
 function testWarnings (input, output, warnings, opts, done) {
     process(input, opts).then(function (result) {
         var occuredWarnings = result.warnings();
@@ -267,6 +285,83 @@ describe('postcss-bem', function () {
         describe('@when', function() {
             it('does nothing', function (done) {
                 test('@component component-name {@when stateName {}}', '.component-name {\n    @when stateName {}\n}', useBem, done);
+            });
+        });
+    });
+
+    describe('shortcuts', function () {
+        var useBem = {
+            shortcuts: {
+                'component-namespace': 'ns',
+                component: 'b',
+                modifier: 'm',
+                descendent: 'e'
+            },
+            style: 'bem'
+        };
+        var useSuit = {
+            shortcuts: {
+                utility: 'ut',
+                'component-namespace': 'ns',
+                component: 'com',
+                modifier: 'mod',
+                descendent: 'dec',
+                when: 'state'
+            }
+        };
+
+        describe('bem', function() {
+            it('shortcut for component behaves the same way as component', function (done) {
+                testSame(
+                    '@component component-name {@descendent descendent-name {}}',
+                    '@b component-name {@descendent descendent-name {}}', useBem, done);
+            });
+            it('shortcut for namespace behaves the same way as namespace', function (done) {
+                testSame(
+                    '@component-namespace nmsp {@component component-name {color: red; text-align: right;}}',
+                    '@ns nmsp {@component component-name {color: red; text-align: right;}}', useBem, done);
+            });
+            it('shortcut for descendent behaves the same way as descendent', function (done) {
+                testSame(
+                    '@component component-name {@descendent descendent-name {}}',
+                    '@component component-name {@e descendent-name {}}', useBem, done);
+            });
+            it('shortcut for modifier behaves the same way as modifier', function (done) {
+                testSame(
+                    '@component component-name {@modifier modifier-name {}}',
+                    '@component component-name {@m modifier-name {}}', useBem, done);
+            });
+        });
+        describe('suit', function() {
+            it('shortcut for component behaves the same way as component', function (done) {
+                testSame(
+                    '@component component-name {@descendent descendent-name {}}',
+                    '@com component-name {@descendent descendent-name {}}', useSuit, done);
+            });
+            it('shortcut for utility behaves the same way as utility', function (done) {
+                testSame(
+                    '@utility utilityName {}',
+                    '@ut utilityName {}', useSuit, done);
+            });
+            it('shortcut for namespace behaves the same way as namespace', function (done) {
+                testSame(
+                    '@component-namespace nmsp {@component ComponentName {color: red; text-align: right;}}',
+                    '@ns nmsp {@component ComponentName {color: red; text-align: right;}}', useSuit, done);
+            });
+            it('shortcut for modifier behaves the same way as modifier', function (done) {
+                testSame(
+                    '@component component-name {@modifier modifier-name {}}',
+                    '@component component-name {@mod modifier-name {}}', useSuit, done);
+            });
+            it('shortcut for descendent behaves the same way as descendent', function (done) {
+                testSame(
+                    '@component component-name {@descendent descendent-name {}}',
+                    '@component component-name {@dec descendent-name {}}', useSuit, done);
+            });
+            it('shortcut for @when behaves the same way as @when', function (done) {
+                testSame(
+                    '@component ComponentName {@when stateName {}}',
+                    '@component ComponentName {@state stateName {}}', useSuit, done);
             });
         });
     });

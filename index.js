@@ -1,4 +1,5 @@
 var postcss = require('postcss');
+var extend = require('util')._extend;
 var config = {
     suit: {
         separators: {
@@ -14,7 +15,8 @@ var config = {
             descendent: '__',
             modifier: '_'
         }
-    }
+    },
+    shortcuts: {}
 };
 
 module.exports = postcss.plugin('postcss-bem', function (opts) {
@@ -27,6 +29,8 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
     if (opts.style !== 'suit' && opts.style !== 'bem') {
         throw new Error('postcss-bem: opts.style may only be "suit" or "bem"');
     }
+
+    opts.shortcuts = extend(config.shortcuts, opts.shortcuts);
 
     var currentConfig = config[opts.style];
 
@@ -41,6 +45,10 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
                 throw new Error('postcss-bem: opts.separators.' + customSeparator + ' must be a string');
             }
         }
+    }
+
+    function checkRuleMatches(name, rule) {
+        return rule.name === name || !!opts.shortcuts[name] && rule.name === opts.shortcuts[name];
     }
 
     function processComponent (component, namespace) {
@@ -60,9 +68,9 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
             var newRule;
 
             if (rule.type === 'atrule') {
-                if (rule.name === 'modifier') {
+                if (checkRuleMatches('modifier', rule)) {
                     separator = currentConfig.separators.modifier;
-                } else if (rule.name === 'descendent') {
+                } else if (checkRuleMatches('descendent', rule)) {
                     separator = currentConfig.separators.descendent;
                 }
 
@@ -91,7 +99,8 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
         var namespaces = {};
 
         if (opts.style === 'suit') {
-            css.eachAtRule('utility', function (utility) {
+            css.eachAtRule(function (utility) {
+                if (!checkRuleMatches('utility', utility)) return;
                 if (!utility.params) {
                     throw utility.error('No names supplied to @utility');
                 }
@@ -142,7 +151,8 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
             });
         }
 
-        css.eachAtRule('component-namespace', function (namespace) {
+        css.eachAtRule(function (namespace) {
+            if ( !checkRuleMatches('component-namespace', namespace) ) return;
             var name = namespace.params;
 
             if (!namespace.nodes) {
@@ -151,7 +161,8 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
                 return;
             }
 
-            namespace.eachAtRule('component', function (component) {
+            namespace.eachAtRule(function (component) {
+                if ( !checkRuleMatches('component', component) ) return;
                 processComponent(component, name);
             });
 
@@ -163,7 +174,8 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
             namespace.removeSelf();
         });
 
-        css.eachAtRule('component', function (component) {
+        css.eachAtRule(function (component) {
+            if ( !checkRuleMatches('component', component) ) return;
             var namespace = opts.defaultNamespace;
             var id = component.source.input.file || component.source.input.id;
             if (id in namespaces) {
@@ -174,7 +186,8 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
         });
 
         if (opts.style === 'suit') {
-            css.eachAtRule('when', function (when) {
+            css.eachAtRule(function (when) {
+                if ( !checkRuleMatches('when', when)) return;
                 var parent = when.parent;
 
                 if (parent === css || parent.type !== 'rule') {
