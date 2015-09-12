@@ -1,0 +1,8 @@
+@b nav {
+    @e item {
+        display: inline-block;
+    }
+    @m placement_header {
+        background-color: red;
+    }
+}
