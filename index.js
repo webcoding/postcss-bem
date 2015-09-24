@@ -51,6 +51,42 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
         return rule.name === name || !!opts.shortcuts[name] && rule.name === opts.shortcuts[name];
     }
 
+    function processModifierOrDescendent(name, rule, container, after) {
+        var separator;
+        var newName;
+        var last;
+        var newRule;
+        if (checkRuleMatches('modifier', rule)) {
+            separator = currentConfig.separators.modifier;
+        } else if (checkRuleMatches('descendent', rule)) {
+            separator = currentConfig.separators.descendent;
+        }
+
+        if(separator) {
+            newName = name + separator + rule.params;
+            newRule = postcss.rule({
+                selector: '.' + newName,
+                source: rule.source
+            });
+            container.insertAfter(after, newRule);
+            last = newRule;
+            rule.each(function (node) {
+                var subrule = false;
+                if (node.type === 'atrule') {
+                    subrule = processModifierOrDescendent(newName, node, container, last);
+                }
+                if (subrule) {
+                    last = subrule;
+                } else {
+                    node.moveTo(newRule);
+                }
+            });
+            rule.removeSelf();
+            return last;
+        }
+        return false;
+    }
+
     function processComponent (component, namespace) {
         var name = component.params;
 
@@ -64,30 +100,14 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
             source: component.source
         });
         component.each(function (rule) {
-            var separator;
-            var newRule;
+            var newRule = false;
 
             if (rule.type === 'atrule') {
-                if (checkRuleMatches('modifier', rule)) {
-                    separator = currentConfig.separators.modifier;
-                } else if (checkRuleMatches('descendent', rule)) {
-                    separator = currentConfig.separators.descendent;
-                }
-
-                if(separator) {
-                    newRule = postcss.rule({
-                        selector: '.' + name + separator + rule.params,
-                        source: rule.source
-                    });
-                    rule.each(function (node) {
-                        node.moveTo(newRule);
-                    });
-                    component.parent.insertAfter(last, newRule);
-                    last = newRule;
-                    rule.removeSelf();
-                }
+                newRule = processModifierOrDescendent(name, rule, component.parent, last);
             }
-            if (!separator) {
+            if (newRule) {
+                last = newRule;
+            } else {
                 rule.moveTo(newComponent);
             }
         });

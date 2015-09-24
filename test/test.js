@@ -168,6 +168,10 @@ describe('postcss-bem', function () {
             it('allows modifier separator overrides', function (done) {
                 testSeparatorOverride('@component ComponentName {@modifier modifierName {}}', '.ComponentName {}\n.ComponentName__modifierName {}', 'modifier', '__', done);
             });
+
+            it('works inside of @descendent', function (done) {
+                test('@component ComponentName {color: red; text-align: right; @descendent descendentName {color: blue; text-align: left; @modifier modifierName {color: green; text-align: center;}}}', '.ComponentName {\n    color: red;\n    text-align: right\n}\n.ComponentName-descendentName {\n    color: blue;\n    text-align: left\n}\n.ComponentName-descendentName__modifierName {\n    color: green;\n    text-align: center\n}', {}, done);
+            });
         });
 
         describe('@descendent', function() {
@@ -271,6 +275,10 @@ describe('postcss-bem', function () {
 
             it('allows modifier separator overrides', function (done) {
                 testSeparatorOverride('@component component-name {@modifier modifier-name {}}', '.component-name {}\n.component-name__modifier-name {}', 'modifier', '__', done);
+            });
+
+            it('works inside of @descendent', function (done) {
+                test('@component component-name {color: red; text-align: right; @descendent descendent-name {color: blue; text-align: left; @modifier modifier-name {color: green; text-align: center;}}}', '.component-name {\n    color: red;\n    text-align: right\n}\n.component-name__descendent-name {\n    color: blue;\n    text-align: left\n}\n.component-name__descendent-name_modifier-name {\n    color: green;\n    text-align: center\n}', useBem, done);
             });
         });
 
