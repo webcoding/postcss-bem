@@ -1,3 +1,7 @@
+0.3.2 (2015-09-24)
+  - Parse modifiers inside of descendents (#6)
+  - Remove node@0.10 and add node@4.0.0 and node@4.1.1 to .travis.yml
+
 0.3.1 (2015-08-24)
   - Allow overriding separators (#3)
 
