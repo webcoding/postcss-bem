@@ -1,3 +1,6 @@
+0.4.0 (2015-10-26)
+  - Update postcss to v5.0.8 (#8)
+
 0.3.2 (2015-09-24)
   - Parse modifiers inside of descendents (#6)
   - Remove node@0.10 and add node@4.0.0 and node@4.1.1 to .travis.yml
