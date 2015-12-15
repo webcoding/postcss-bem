@@ -1,3 +1,6 @@
+0.4.1 (2015-12-15)
+  - Fix deprecation warnings (#10, #11)
+
 0.4.0 (2015-10-26)
   - Update postcss to v5.0.8 (#8)
 
