@@ -1,13 +1,13 @@
 {
-    "name": "postcss-bem",
-    "version": "0.4.1",
+    "name": "saladcss-bem",
+    "version": "0.0.1",
     "description": "PostCSS plugin implementing BEM as at-rules",
     "keywords": ["postcss", "css", "postcss-plugin", "bem"],
     "author": "Malte-Maurice Dreyer <dreyer.maltem+dev@gmail.com>",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url":  "https://github.com/ileri/postcss-bem.git"
+        "url":  "https://github.com/saladcss/saladcss-bem.git"
     },
     "dependencies": {
         "postcss": "^5.0.8"

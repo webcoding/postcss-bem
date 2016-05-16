@@ -18,7 +18,6 @@ gulp.task('test', function () {
     return gulp.src('test/*.js', { read: false }).pipe(mocha());
 });
 
-
 gulp.task('watch', function () {
     watchMode = true;
     return gulp.watch(['index.js', 'test/*.js', 'test/fixtures/*.*'], ['lint', 'test']);

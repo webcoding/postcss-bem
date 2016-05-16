@@ -169,8 +169,16 @@ describe('postcss-bem', function () {
                 testSeparatorOverride('@component ComponentName {@modifier modifierName {}}', '.ComponentName {}\n.ComponentName__modifierName {}', 'modifier', '__', done);
             });
 
+            it('accepts multiple modifier names', function (done) {
+                test('@component Alert { @modifier error,warning { color: #f00; } }', '.Alert {}\n.Alert__error, .Alert__warning {\n    color: #f00\n}', {}, done);
+            });
+
             it('works inside of @descendent', function (done) {
                 test('@component ComponentName {color: red; text-align: right; @descendent descendentName {color: blue; text-align: left; @modifier modifierName {color: green; text-align: center;}}}', '.ComponentName {\n    color: red;\n    text-align: right\n}\n.ComponentName-descendentName {\n    color: blue;\n    text-align: left\n}\n.ComponentName-descendentName__modifierName {\n    color: green;\n    text-align: center\n}', {}, done);
+            });
+
+            it('works inside of @descendent with multiple descendent and modifier names', function (done) {
+                test('@component Box { @descendent header, content { font-weight: bold; @modifier red, important { color: #f00 } } }', '.Box {}\n.Box-header, .Box-content {\n    font-weight: bold\n}\n.Box-header__red, .Box-content__red, .Box-header__important, .Box-content__important {\n    color: #f00\n}', {}, done);
             });
         });
 
@@ -181,6 +189,10 @@ describe('postcss-bem', function () {
 
             it('works with properties', function (done) {
                 test('@component ComponentName {color: red; text-align: right; @descendent descendentName {color: blue; text-align: left;}}', '.ComponentName {\n    color: red;\n    text-align: right\n}\n.ComponentName-descendentName {\n    color: blue;\n    text-align: left\n}', {}, done);
+            });
+
+            it('accepts multiple descendent names', function (done) {
+                test('@component Box { @descendent header, content { font-weight: bold; } }', '.Box {}\n.Box-header, .Box-content {\n    font-weight: bold\n}', {}, done);
             });
 
             it('allows descendent separator overrides', function (done) {

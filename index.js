@@ -19,6 +19,18 @@ var config = {
     shortcuts: {}
 };
 
+// combines a list of base names (eg. a Component name) with a list of child
+// names (eg. a Modifier name)
+function combineNames(parentNames, childNames, separator) {
+    var classNames = [];
+    childNames.forEach(function (child) {
+        parentNames.forEach(function (parent) {
+            classNames.push(parent.trim() + separator + child.trim());
+        });
+    });
+    return classNames;
+}
+
 module.exports = postcss.plugin('postcss-bem', function (opts) {
     opts = opts || {};
 
@@ -51,11 +63,11 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
         return rule.name === name || !!opts.shortcuts[name] && rule.name === opts.shortcuts[name];
     }
 
-    function processModifierOrDescendent(name, rule, container, after) {
+    function processModifierOrDescendent(baseNames, rule, container, after) {
         var separator;
-        var newName;
         var last;
         var newRule;
+        var newNames;
         if (checkRuleMatches('modifier', rule)) {
             separator = currentConfig.separators.modifier;
         } else if (checkRuleMatches('descendent', rule)) {
@@ -63,9 +75,12 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
         }
 
         if(separator) {
-            newName = name + separator + rule.params;
+            newNames = combineNames(baseNames, rule.params.split(','), separator);
             newRule = postcss.rule({
-                selector: '.' + newName,
+                // selectors: component names with `.`s in front
+                selector: newNames.map(function (name) {
+                    return '.' + name;
+                }).join(', '),
                 source: rule.source
             });
             container.insertAfter(after, newRule);
@@ -73,7 +88,7 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
             rule.each(function (node) {
                 var subrule = false;
                 if (node.type === 'atrule') {
-                    subrule = processModifierOrDescendent(newName, node, container, last);
+                    subrule = processModifierOrDescendent(newNames, node, container, last);
                 }
                 if (subrule) {
                     last = subrule;
@@ -103,7 +118,7 @@ module.exports = postcss.plugin('postcss-bem', function (opts) {
             var newRule = false;
 
             if (rule.type === 'atrule') {
-                newRule = processModifierOrDescendent(name, rule, component.parent, last);
+                newRule = processModifierOrDescendent([name], rule, component.parent, last);
             }
             if (newRule) {
                 last = newRule;
