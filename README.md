@@ -33,6 +33,9 @@ SUIT中的Components就相当于BEM中的Block。组件的命名方式常常使�
 
 组件可以在命名前加一个nmsp-这样的命名空间，用来防止类名的冲突。比如.mine-SearchForm。
 
+## 示例
+
+input:
 
 ```css
 @utility utilityName {
@@ -65,6 +68,8 @@ SUIT中的Components就相当于BEM中的Block。组件的命名方式常常使�
   }
 }
 ```
+
+you will get:
 
 ```css
 .u-utilityName {
