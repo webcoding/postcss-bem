@@ -1,6 +1,6 @@
 {
   "name": "postcss-plugin-bem",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "PostCSS plugin implementing BEM as at-rules",
   "keywords": [
     "postcss",

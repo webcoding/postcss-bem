@@ -4,6 +4,8 @@
 
 [PostCSS] plugin implementing BEM as at-rules.
 
+**注意**：css 样式命名推荐用class，并且全部使用小写，无必要则不使用 ID选择器
+
 [PostCSS]: https://github.com/postcss/postcss
 [ci-img]:  https://travis-ci.org/ileri/postcss-bem.svg
 [ci]:      https://travis-ci.org/ileri/postcss-bem
@@ -21,17 +23,17 @@ postcss-bem 默认是 suit 模式（在BEM模式中没有@utility和@when语法�
 SUIT中的Components就相当于BEM中的Block。组件的命名方式常常使用pascal命名，也更适合SUIT，使它们更容易识别。例如.SearcForm。
 
 - @descendent 缩写 @e [element]
-  - SUIT中的Descendants相当于BEM中的Element。它使用破折号-和驼峰命名结合在一起来。例如.SearchForm-heading，.SearchForm-textField
+  - SUIT中的Descendants相当于BEM中的Element。它使用破折号-和驼峰命名结合在一起来。例如.searchform--heading，. searchform--textfield
 - @modifier 缩写 @m
   - SUIT中的Modifier和BEM中的一样，但SUIT对他们的角色控制的更为严格。SUIT中的Modifier只用于组件(Components)上，不用于Dedicated上。它也不能用于表示状态(State)变化，就算要用于状态的变化，SUIT也有自己一套专用的命名约定。
-  - Modifier都用两个破折号--来连接，例如：SearchForm--advanced。
+  - Modifier都用两个破折号--来连接，例如：searchform--advanced。
 - @when
   - State是用来反映组件更改的状态。通过不同的修饰词，反映出组件修改后的基本外观。如果有必要，State也可以应用于Descendent中。
-  - State一般都在驼峰命名前添加is-前缀。如：.SearchForm.is-invalid。
+  - State一般都在驼峰命名前添加is-前缀。如：.searchform.is-invalid。
 
 ### @component-namespace
 
-组件可以在命名前加一个nmsp-这样的命名空间，用来防止类名的冲突。比如.mine-SearchForm。
+组件可以在命名前加一个nmsp-这样的命名空间，用来防止类名的冲突。比如.mine-searchform。
 
 ## 示例
 
@@ -46,7 +48,7 @@ input:
   color: blue;
 }
 
-@component ComponentName {
+@component componentName {
   color: cyan;
 
   @modifier modifierName {
@@ -63,7 +65,7 @@ input:
 }
 
 @component-namespace nmsp {
-  @component ComponentName {
+  @component componentName {
     color: red;
   }
 }
@@ -80,23 +82,23 @@ you will get:
   color: blue;
 }
 
-.ComponentName {
+.componentName {
   color: cyan;
 }
 
-.ComponentName--modifierName {
+.componentName--modifierName {
   color: yellow;
 }
 
-.ComponentName-descendentName {
+.componentName-descendentName {
   color: navy;
 }
 
-.ComponentName.is-stateName {
+.componentName.is-stateName {
   color: crimson;
 }
 
-.nmsp-ComponentName {
+.nmsp-componentName {
   color: red;
 }
 ```
